@@ -37,7 +37,7 @@ require("dashboard").setup({
         icon_hl = 'Title',
         desc = 'Find File           ',
         desc_hl = 'String',
-        key = 'b',
+        key = 'f',
         keymap = 'SPC f f',
         key_hl = 'Number',
         key_format = ' %s',
