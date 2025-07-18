@@ -23,6 +23,7 @@ require("plugins.tools.treesitter")
 
 -- lsp
 require("plugins.lsp.config")
+require("plugins.lsp.languages")
 
 
 -- other config

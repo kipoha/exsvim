@@ -1,4 +1,7 @@
 require("core.colorscheme.catppuccin")
+require("colorizer").setup({
+  "*",
+})
 require("lspkind").init({
   mode = 'symbol_text', -- 'text', 'symbol', 'symbol_text'
 

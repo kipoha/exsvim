@@ -60,4 +60,7 @@ return {
 
   -- treesitter
   { "nvim-treesitter/nvim-treesitter" },
+
+  -- colors
+  { "norcalli/nvim-colorizer.lua" },
 }

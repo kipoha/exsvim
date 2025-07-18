@@ -9,26 +9,6 @@ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
   }
 )
 
-local on_attach = function(client, bufnr)
-  local opts = { noremap = true, silent = true, buffer = bufnr }
-  local keymap = vim.keymap.set
-
-  keymap('n', 'gd', vim.lsp.buf.definition, opts)
-  keymap('n', 'gD', vim.lsp.buf.declaration, opts)
-  keymap('n', 'gr', require('telescope.builtin').lsp_references, opts)
-  keymap('n', 'gi', vim.lsp.buf.implementation, opts)
-  keymap('n', 'K', vim.lsp.buf.hover, opts)
-  keymap('n', '<leader>rn', vim.lsp.buf.rename, opts)
-  keymap('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-  keymap('n', '<leader>de', vim.diagnostic.open_float, opts)
-  keymap('n', '[d', vim.diagnostic.goto_prev, opts)
-  keymap('n', ']d', vim.diagnostic.goto_next, opts)
-  keymap('n', '<leader>dq', vim.diagnostic.setloclist, opts)
-  keymap('n', '<leader>lf', function()
-    vim.lsp.buf.format({ timeout_ms = 2000 })
-  end, opts)
-end
-
 cmp.setup({
   snippet = {
     expand = function(args)
@@ -79,62 +59,6 @@ cmp.setup({
     documentation = cmp.config.window.bordered(),
   },
 })
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-local lspconfig = require("lspconfig")
-
--- lspconfig.pyright.setup({
---   on_attach = on_attach,
---   capabilities = capabilities,
--- })
--- lspconfig.ruff.setup {
---   on_attach = on_attach,
---   capabilities = capabilities
--- }
--- Pyright для автодополнения, hover и анализа
-require('lspconfig').pyright.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-  settings = {
-    pyright = { disableOrganizeImports = true },
-    python = { analysis = {
-      ignore = { "*" },  -- Отключаем линтинг в pyright
-    }},
-  },
-})
-
--- Ruff LSP для линтинга, автофиксов и порядочного импорта
-require('lspconfig').ruff.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-  init_options = {
-    settings = {
-      lint = { run = "onType" },  -- Диагностика при вводе
-      fixAll = true,
-      organizeImports = true,
-    },
-  },
-})
-
-lspconfig.elixirls.setup({
-  on_attach = on_attach,
-  cmd = { "elixir-ls" },
-  settings = {
-    elixirLS = {
-      dialyzerEnabled = true,
-      fetchDeps = true,
-      enableTestLenses = true,
-      suggestSpecs = true,
-    },
-  },
-  capabilities = capabilities,
-})
-
-lspconfig.lua_ls.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
 require("nvim-autopairs").setup({})
 
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
