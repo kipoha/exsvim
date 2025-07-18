@@ -18,8 +18,13 @@ end
 
 
 require("nvim-tree").setup({
+  filters = {
+    dotfiles = false,
+    git_ignored = false, 
+  },
   git = {
     enable = true,
+    ignore = false,
   },
   on_attach = on_attach,
   sort = {

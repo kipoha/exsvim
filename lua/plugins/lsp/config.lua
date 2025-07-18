@@ -1,28 +1,32 @@
 local cmp = require("cmp")
+local lspkind = require('lspkind')
 local luasnip = require("luasnip")
 
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+  vim.lsp.handlers.hover,
+  {
+    border = "rounded",
+  }
+)
 
 local on_attach = function(client, bufnr)
-  local opts = { noremap=true, silent=true, buffer=bufnr }
-
+  local opts = { noremap = true, silent = true, buffer = bufnr }
   local keymap = vim.keymap.set
 
-  -- keymap('n', 'gd', require('telescope.builtin').lsp_definitions, opts)       -- goto definition через Telescope
-  -- keymap('n', 'gD', require('telescope.builtin').lsp_declarations, opts)      -- goto declaration через Telescope
-  keymap('n', 'gr', require('telescope.builtin').lsp_references, opts)        -- references через Telescope
-  -- keymap('n', 'gi', require('telescope.builtin').lsp_implementations, opts)   -- implementations через Telescope
   keymap('n', 'gd', vim.lsp.buf.definition, opts)
   keymap('n', 'gD', vim.lsp.buf.declaration, opts)
-  -- keymap('n', 'gr', vim.lsp.buf.references, opts)
+  keymap('n', 'gr', require('telescope.builtin').lsp_references, opts)
   keymap('n', 'gi', vim.lsp.buf.implementation, opts)
-
   keymap('n', 'K', vim.lsp.buf.hover, opts)
   keymap('n', '<leader>rn', vim.lsp.buf.rename, opts)
   keymap('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-  keymap('n', '<leader>e', vim.diagnostic.open_float, opts)
+  keymap('n', '<leader>de', vim.diagnostic.open_float, opts)
   keymap('n', '[d', vim.diagnostic.goto_prev, opts)
   keymap('n', ']d', vim.diagnostic.goto_next, opts)
-  keymap('n', '<leader>q', vim.diagnostic.setloclist, opts)
+  keymap('n', '<leader>dq', vim.diagnostic.setloclist, opts)
+  keymap('n', '<leader>lf', function()
+    vim.lsp.buf.format({ timeout_ms = 2000 })
+  end, opts)
 end
 
 cmp.setup({
@@ -57,27 +61,63 @@ cmp.setup({
     end, { "i", "s" }),
   }),
   sources = cmp.config.sources({
-    { name = "nvim_lsp" },
-    { name = "luasnip" },
+    { name = "nvim_lsp", priority = 100, keyword_length = 1 },
+    { name = "buffer",   priority = 100, keyword_length = 1 },
+    { name = "luasnip",  priority = 90,  keyword_length = 1 },
+    { name = "path",     priority = 70,  keyword_length = 1 },
   }),
   completion = {
     autocomplete = {
-      cmp.TriggerEvent.TextChanged,
-      cmp.TriggerEvent.InsertEnter,
-    }
-  }
+      cmp.TriggerEvent.TextChanged
+    },
+  },
+  -- mapping = cmp.mapping.preset.insert({
+  --   ['<CR>'] = cmp.mapping.confirm({ select = false }),  -- Настройка клавиши Enter
+  -- }),
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  },
 })
--- Настройка capabilities для LSP, чтобы работали подсказки
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local lspconfig = require("lspconfig")
 
-lspconfig.pyright.setup({
-  -- on_attach = on_attach,
+-- lspconfig.pyright.setup({
+--   on_attach = on_attach,
+--   capabilities = capabilities,
+-- })
+-- lspconfig.ruff.setup {
+--   on_attach = on_attach,
+--   capabilities = capabilities
+-- }
+-- Pyright для автодополнения, hover и анализа
+require('lspconfig').pyright.setup({
+  on_attach = on_attach,
   capabilities = capabilities,
+  settings = {
+    pyright = { disableOrganizeImports = true },
+    python = { analysis = {
+      ignore = { "*" },  -- Отключаем линтинг в pyright
+    }},
+  },
+})
+
+-- Ruff LSP для линтинга, автофиксов и порядочного импорта
+require('lspconfig').ruff.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+  init_options = {
+    settings = {
+      lint = { run = "onType" },  -- Диагностика при вводе
+      fixAll = true,
+      organizeImports = true,
+    },
+  },
 })
 
 lspconfig.elixirls.setup({
+  on_attach = on_attach,
   cmd = { "elixir-ls" },
   settings = {
     elixirLS = {
@@ -91,5 +131,11 @@ lspconfig.elixirls.setup({
 })
 
 lspconfig.lua_ls.setup({
+  on_attach = on_attach,
   capabilities = capabilities,
 })
+
+require("nvim-autopairs").setup({})
+
+local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
