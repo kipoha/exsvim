@@ -7,9 +7,9 @@
 
 # KEYBINDINGS
 
-⚠️ **Warning:** All keybindings are **case-sensitive**!  
-`K` is not the same as `k`, and `Shift + Tab` is not the same as `Tab`.  
-Make sure you're using the correct key combinations.
+> [!WARNING]
+> All keybindings are **case-sensitive**.  
+> For example, `K` is not the same as `k`, and `Shift + Tab` is not the same as `Tab`.
 
 ## NORMAL MODE
 
