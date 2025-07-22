@@ -57,14 +57,14 @@ require('lspconfig').ruff.setup({
 lspconfig.elixirls.setup({
   on_attach = on_attach,
   cmd = { "elixir-ls" },
-  settings = {
-    elixirLS = {
-      dialyzerEnabled = true,
-      fetchDeps = true,
-      enableTestLenses = true,
-      suggestSpecs = true,
-    },
-  },
+  -- settings = {
+  --   elixirLS = {
+  --     dialyzerEnabled = true,
+  --     fetchDeps = true,
+  --     enableTestLenses = true,
+  --     suggestSpecs = true,
+  --   },
+  -- },
   capabilities = capabilities,
 })
 
@@ -85,6 +85,26 @@ lspconfig.html.setup({
 })
 
 lspconfig.ast_grep.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+lspconfig.dockerls.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+lspconfig.yamlls.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+lspconfig.docker_compose_language_service.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+lspconfig.jsonls.setup({
   on_attach = on_attach,
   capabilities = capabilities,
 })
