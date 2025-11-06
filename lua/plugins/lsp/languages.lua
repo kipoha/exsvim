@@ -20,6 +20,10 @@ local on_attach = function(client, bufnr)
   keymap('n', '<leader>lf', function()
     vim.lsp.buf.format({ timeout_ms = 2000 })
   end, opts)
+
+  vim.keymap.set('n', '<leader>lr', function()
+    vim.cmd('LspRestart')
+  end, { desc = "Reload LSP" })
 end
 
 

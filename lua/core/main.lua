@@ -1,4 +1,5 @@
 vim.g.mapleader = " "
+vim.opt.fillchars = { eob = " " }
 vim.wo.wrap = false
 vim.wo.number = true
 vim.wo.relativenumber = true 

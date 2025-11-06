@@ -4,9 +4,12 @@ require("catppuccin").setup({
 		light = "mocha",
 		dark = "mocha",
 	},
-	transparent_background = false, -- disables setting the background color.
-	show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
-	term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
+	-- transparent_background = false, -- disables setting the background color.
+	transparent_background = true, -- disables setting the background color.
+	-- show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
+	show_end_of_buffer = true, -- shows the '~' characters after the end of buffers
+	-- term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
+	term_colors = true, -- sets terminal colors (e.g. `g:terminal_color_0`)
 	dim_inactive = {
 		enabled = false, -- dims the background color of inactive window
 		shade = "dark",
@@ -31,12 +34,12 @@ require("catppuccin").setup({
 		-- miscs = {}, -- Uncomment to turn off hard-coded styles
 	},
 	color_overrides = {},
-	custom_highlights = function(colors)
-    return {
-      NormalFloat = { bg = colors.base },
-      FloatBorder = { fg = colors.flamingo },
-    }
-  end,
+	-- custom_highlights = function(colors)
+ --    return {
+ --      NormalFloat = { bg = colors.base },
+ --      FloatBorder = { fg = colors.flamingo },
+ --    }
+ --  end,
 	default_integrations = true,
 	integrations = {
 		cmp = true,
@@ -54,3 +57,10 @@ require("catppuccin").setup({
 
 -- setup must be called before loading
 vim.cmd.colorscheme("catppuccin")
+
+for _, group in ipairs({
+  "Normal", "NormalNC", "NormalFloat", "FloatBorder",
+  "SignColumn", "EndOfBuffer", "MsgArea", "WinSeparator",
+}) do
+  vim.api.nvim_set_hl(0, group, { bg = "none" })
+end

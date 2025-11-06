@@ -19,7 +19,8 @@ return {
   { "Exafunction/windsurf.vim" },
   { "nvim-lua/plenary.nvim" },
   { "hrsh7th/nvim-cmp" },
-  { "andweeb/presence.nvim" },
+  -- { "andweeb/presence.nvim" },
+  { "vyfor/cord.nvim" },
 
   -- cmp
   { "hrsh7th/nvim-cmp" },
