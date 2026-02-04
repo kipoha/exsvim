@@ -2,12 +2,15 @@ local cmp = require("cmp")
 local lspkind = require('lspkind')
 local luasnip = require("luasnip")
 
+
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
   vim.lsp.handlers.hover,
   {
     border = "rounded",
   }
 )
+
+require("luasnip.loaders.from_vscode").lazy_load()
 
 cmp.setup({
   snippet = {
@@ -55,8 +58,14 @@ cmp.setup({
   --   ['<CR>'] = cmp.mapping.confirm({ select = false }),  -- Настройка клавиши Enter
   -- }),
   window = {
-    completion = cmp.config.window.bordered(),
-    documentation = cmp.config.window.bordered(),
+    completion = {
+      border = "rounded",
+      winhighlight = "Normal:Pmenu,FloatBorder:PmenuBorder,CursorLine:PmenuSel",
+    },
+    documentation = {
+      border = "rounded",
+      winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+    },
   },
   formatting = {
     format = lspkind.cmp_format({
