@@ -22,9 +22,21 @@ function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
   return orig(contents, syntax, opts, ...)
 end
 
+---@param client vim.lsp.Client
+---@param bufnr number
 local on_attach = function(client, bufnr)
   local opts = { noremap = true, silent = true, buffer = bufnr }
   local keymap = vim.keymap.set
+
+  if client.name == "ty" then
+    client.server_capabilities.completionProvider = false
+    client.server_capabilities.hoverProvider = false
+    client.server_capabilities.definitionProvider = false
+  end
+
+  if client.name == "pyright" then
+    client.server_capabilities.documentFormattingProvider = false
+  end
 
   keymap('n', 'gd', vim.lsp.buf.definition, opts)
   keymap('n', 'gD', vim.lsp.buf.declaration, opts)
@@ -40,9 +52,8 @@ local on_attach = function(client, bufnr)
   keymap('n', '<leader>lf', function()
     vim.lsp.buf.format({ timeout_ms = 2000 })
   end, opts)
-
-  vim.keymap.set('n', '<leader>lr', function()
-    vim.cmd('LspRestart')
+  keymap('n', '<leader>lr', function()
+    vim.cmd('edit')
   end, { desc = "Reload LSP" })
 end
 
@@ -52,91 +63,131 @@ vim.lsp.config("ty", {
   capabilities = capabilities,
   settings = {
     ty = {
-      configurationFile = "/home/kipoha/.config/ty/ty.toml"
+      configurationFile = "~/.config/ty/ty.toml"
     },
   },
 })
 vim.lsp.enable("ty")
 
-
-vim.lsp.config("ruff", {
+vim.lsp.config("pyright", {
   on_attach = on_attach,
   capabilities = capabilities,
-  init_options = {
-    settings = {
-      lint = { run = "onType" },
-      fixAll = true,
-      organizeImports = true,
+  settings = {
+    python = {
+      analysis = {
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+        diagnosticMode = "openFilesOnly",
+      },
     },
   },
 })
+vim.lsp.enable("pyright")
+
+vim.lsp.config("ruff", {
+  on_attach = function(client, bufnr)
+    client.server_capabilities.documentFormattingProvider = true
+    on_attach(client, bufnr)
+  end,
+  capabilities = capabilities,
+  init_options = { settings = { lint = { run = "onType" }, fixAll = true, organizeImports = true, lineLength = 88, format = { enabled = true } }, },
+})
 vim.lsp.enable("ruff")
+
 
 vim.lsp.config("elixirls", {
   on_attach = on_attach,
   cmd = { "elixir-ls" },
-  -- settings = {
-  --   elixirLS = {
-  --     dialyzerEnabled = true,
-  --     fetchDeps = true,
-  --     enableTestLenses = true,
-  --     suggestSpecs = true,
-  --   },
-  -- },
+  settings = {
+    elixirLS = {
+      dialyzerEnabled = true,
+      fetchDeps = true,
+      enableTestLenses = true,
+      suggestSpecs = true,
+    },
+  },
   capabilities = capabilities,
 })
+vim.lsp.enable("elixirls")
 
 vim.lsp.config("lua_ls", {
   on_attach = on_attach,
   capabilities = capabilities,
+  settings = {
+    Lua = {
+      runtime = {
+        version = "LuaJIT",
+      },
+      diagnostics = {
+        globals = { "vim" },
+      },
+      workspace = {
+        library = vim.api.nvim_get_runtime_file("", true),
+        checkThirdParty = false,
+      },
+      telemetry = {
+        enable = false,
+      },
+    },
+  }
 })
+vim.lsp.enable("lua_ls")
 
 
 vim.lsp.config("cssls", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
+vim.lsp.enable("cssls")
 
 vim.lsp.config("html", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
+vim.lsp.enable("html")
 
 vim.lsp.config("ast_grep", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
+vim.lsp.enable("ast_grep")
 
 vim.lsp.config("dockerls", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
+vim.lsp.enable("dockerls")
 
 vim.lsp.config("yamlls", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
+vim.lsp.enable("yamlls")
 
 vim.lsp.config("docker_compose_language_service", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
+vim.lsp.enable("docker_compose_language_service")
 
 vim.lsp.config("jsonls", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
+vim.lsp.enable("jsonls")
 
 vim.lsp.config("qmlls", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
+vim.lsp.enable("qmlls")
 
 vim.lsp.config("sqlls", {
   on_attach = on_attach,
   capabilities = capabilities,
   filetypes = { "sql", "plsql" },
 })
+vim.lsp.enable("sqlls")
 
 vim.lsp.config("sqls", {
   on_attach = on_attach,
